@@ -5,6 +5,17 @@ from django.conf import settings
 
 # Create your models here.
 class User(AbstractUser):
+    ROLE = [("MANAGEMENT", "management"), ("SALES", "sales"), ("SUPPORT", "support")]
+
+    role = models.CharField(choices=ROLE, max_length=20)
+    email = models.EmailField(unique=True)
+
+    def save(self, *args, **kwargs):
+        if self.ROLE == "MANAGEMENT":
+            self.is_admin = True
+
+        return super(User, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.last_name
 
@@ -13,9 +24,9 @@ class Client(models.Model):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20, unique=True, null=False)
+    phone = models.CharField(max_length=20, unique=True)
     mobile = models.CharField(max_length=20, unique=True)
-    company_name = models.CharField(max_length=250, null=False)
+    company_name = models.CharField(max_length=250)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     sales_contact = models.ForeignKey(
