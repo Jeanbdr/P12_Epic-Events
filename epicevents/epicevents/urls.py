@@ -18,13 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested import routers
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from crm.views import SignupViewSet
+from crm.views import SignupViewSet, ClientViewSet, ObtainTokainPairView
 
 router = routers.SimpleRouter()
+router.register("clients", ClientViewSet, basename="clients")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(router.urls)),
-    path("signup", SignupViewSet.as_view(), name="sign_up"),
+    path("registration", SignupViewSet.as_view(), name="registration"),
+    path("login", ObtainTokainPairView.as_view(), name="obtain_token"),
+    path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
 ]
