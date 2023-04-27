@@ -16,14 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_nested import routers
 from rest_framework import routers
+from rest_framework_nested import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from crm.views import SignupViewSet, ClientViewSet, ObtainTokainPairView
+from crm.views import (
+    SignupViewSet,
+    ClientViewSet,
+    ObtainTokainPairView,
+    ContractViewSet,
+)
 
 router = routers.SimpleRouter()
 router.register("clients", ClientViewSet, basename="clients")
+
+contract_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
+contract_router.register(r"contract", ContractViewSet, basename="contract")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,4 +39,5 @@ urlpatterns = [
     path("registration", SignupViewSet.as_view(), name="registration"),
     path("login", ObtainTokainPairView.as_view(), name="obtain_token"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
+    path("", include(contract_router.urls)),
 ]

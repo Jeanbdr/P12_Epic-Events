@@ -48,7 +48,7 @@ class Contract(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=False, verbose_name="signed")
     amount = models.FloatField()
-    payment_due = models.DateField(auto_now=True)
+    payment_due = models.DateField()
 
     def __str__(self):
         return f"Contract attached to {self.client} - Status : {self.status} - Amount : {self.amount} - Payment due {self.payment_due}"

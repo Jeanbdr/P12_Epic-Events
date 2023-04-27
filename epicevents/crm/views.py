@@ -3,8 +3,13 @@ from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from crm.models import User, Client
-from crm.serializers import SignUpSerializer, ClientSerializer, TokenObtentionSerializer
+from crm.models import User, Client, Contract
+from crm.serializers import (
+    SignUpSerializer,
+    ClientSerializer,
+    TokenObtentionSerializer,
+    ContractSerializer,
+)
 
 
 # Create your views here.
@@ -28,3 +33,13 @@ class ClientViewSet(ModelViewSet):
     queryset = Client.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ClientSerializer
+
+
+class ContractViewSet(ModelViewSet):
+    # queryset = Contract.objects.all()
+    def get_queryset(self):
+        queryset = Contract.objects.filter(client=self.kwargs["client_pk"])
+        return queryset
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ContractSerializer

@@ -93,3 +93,33 @@ class ClientSerializer(serializers.ModelSerializer):
             sales_contact=self.user,
         )
         return client
+
+
+class ContractSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contract
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "client",
+            "sales_contact",
+            "date_created",
+            "date_updated",
+        ]
+
+    @property
+    def user(self):
+        request = self.context.get("request", None)
+        if request:
+            return request.user
+
+    def create(self, validated_data):
+        client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
+        contract = Contract.objects.create(
+            sales_contact=self.user,
+            client=client,
+            status=validated_data["status"],
+            amount=validated_data["amount"],
+            payment_due=validated_data["payment_due"],
+        )
+        return contract
