@@ -25,6 +25,7 @@ from crm.views import (
     ClientViewSet,
     ObtainTokainPairView,
     ContractViewSet,
+    EventViewSet,
 )
 
 router = routers.SimpleRouter()
@@ -32,6 +33,9 @@ router.register("clients", ClientViewSet, basename="clients")
 
 contract_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
 contract_router.register(r"contract", ContractViewSet, basename="contract")
+
+event_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
+event_router.register(r"event", EventViewSet, basename="event")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

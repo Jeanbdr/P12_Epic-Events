@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -123,3 +123,34 @@ class ContractSerializer(serializers.ModelSerializer):
             payment_due=validated_data["payment_due"],
         )
         return contract
+
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = "__all__"
+        read_only_fields = ["id", "client", "date_created", "date_updated"]
+
+    @property
+    def user(self):
+        request = self.context.get("request", None)
+        if request:
+            return request.user
+
+    def create(self, validated_data):
+        client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
+        event = Event.objects.create(
+            client=client,
+            event_status=validated_data["event_status"],
+            support_contact=validated_data["support_contact"],
+            attendees=validated_data["attendees"],
+            event_date=validated_data["event_date"],
+            note=validated_data["note"],
+        )
+        if client.support_contact.role == "SUPPORT":
+            event.save()
+        else:
+            raise ValidationError(
+                "This user is not support user please select a support user"
+            )
+        return event

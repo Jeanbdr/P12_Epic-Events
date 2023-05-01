@@ -1,13 +1,26 @@
 from django.contrib import admin
-from crm.models import User, Client
+from crm.models import User, Client, Event
+from crm.serializers import SignUpSerializer
 from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
 
 # Register your models here.
 
 
-# Model registered on admin panel
-admin.site.register(User)
+# Define a new User Admin
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    serilizers = SignUpSerializer
+    list_display = ("id", "first_name", "last_name", "username", "email", "role")
+    fieldsets = BaseUserAdmin.fieldsets
+    fieldsets[0][1]["fields"] = fieldsets[0][1]["fields"] + ("role",)
+    search_fields = ("username", "email")
+
+
+# Register other elements
 admin.site.register(Client)
+admin.site.register(Event)
 
 # Model unregistered on admin panel
 admin.site.unregister(Group)
