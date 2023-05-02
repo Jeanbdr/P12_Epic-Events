@@ -84,6 +84,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         client = Client.objects.create(
+            client_status=validated_data["client_status"],
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             email=validated_data["email"],
@@ -132,25 +133,21 @@ class EventSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "client", "date_created", "date_updated"]
 
     @property
-    def user(self):
-        request = self.context.get("request", None)
-        if request:
-            return request.user
+    def support_user(self):
+        role_contact = User.objects.filter(role=self.kwargs["role"])
+        if role_contact == "SUPPORT":
+            return role_contact
+        else:
+            raise ValidationError("This user is not a support")
 
     def create(self, validated_data):
         client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
         event = Event.objects.create(
             client=client,
             event_status=validated_data["event_status"],
-            support_contact=validated_data["support_contact"],
+            support_contact=self.support_user,
             attendees=validated_data["attendees"],
             event_date=validated_data["event_date"],
             note=validated_data["note"],
         )
-        if client.support_contact.role == "SUPPORT":
-            event.save()
-        else:
-            raise ValidationError(
-                "This user is not support user please select a support user"
-            )
         return event

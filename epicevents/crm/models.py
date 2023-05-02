@@ -22,9 +22,10 @@ class Client(models.Model):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     email = models.EmailField(unique=True)
-    phone = models.IntegerField(unique=True)
-    mobile = models.IntegerField(unique=True)
+    phone = models.CharField(unique=True)
+    mobile = models.CharField(unique=True)
     company_name = models.CharField(max_length=250)
+    client_status = models.BooleanField(default=False, verbose_name="Under contract")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     sales_contact = models.ForeignKey(
@@ -46,7 +47,7 @@ class Contract(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default=False, verbose_name="signed")
+    status = models.BooleanField(default=False, verbose_name="Signed")
     amount = models.FloatField()
     payment_due = models.DateField()
 
@@ -55,7 +56,7 @@ class Contract(models.Model):
 
 
 class Event(models.Model):
-    STATUS_CHOICES = [("IN_PROGRESS", "In progress"), ("DONE", "done")]
+    STATUS_CHOICES = [("COMING", "Coming"), ("DONE", "done")]
 
     client = models.ForeignKey(
         to=Client, on_delete=models.CASCADE, related_name="events"
