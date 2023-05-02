@@ -61,6 +61,9 @@ class Event(models.Model):
     client = models.ForeignKey(
         to=Client, on_delete=models.CASCADE, related_name="events"
     )
+    contract = models.ForeignKey(
+        to=Contract, on_delete=models.CASCADE, related_name="events"
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     support_contact = models.ForeignKey(

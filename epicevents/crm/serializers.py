@@ -130,7 +130,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = "__all__"
-        read_only_fields = ["id", "client", "date_created", "date_updated"]
+        read_only_fields = ["id", "client", "date_created", "date_updated", "contract"]
 
     @property
     def support_user(self):
@@ -141,9 +141,11 @@ class EventSerializer(serializers.ModelSerializer):
             raise ValidationError("This user is not a support")
 
     def create(self, validated_data):
+        contract = Contract.objects.get(id=self.context["view"].kwargs["contracts_pk"])
         client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
         event = Event.objects.create(
             client=client,
+            contract=contract,
             event_status=validated_data["event_status"],
             support_contact=self.support_user,
             attendees=validated_data["attendees"],

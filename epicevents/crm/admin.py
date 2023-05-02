@@ -1,5 +1,5 @@
 from django.contrib import admin
-from crm.models import User, Client, Event
+from crm.models import User, Client, Event, Contract
 from crm.serializers import SignUpSerializer
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -21,6 +21,7 @@ class UserAdmin(BaseUserAdmin):
 # Register other elements
 admin.site.register(Client)
 admin.site.register(Event)
+admin.site.register(Contract)
 
 # Model unregistered on admin panel
 admin.site.unregister(Group)
