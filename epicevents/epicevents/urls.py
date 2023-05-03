@@ -34,7 +34,9 @@ router.register("clients", ClientViewSet, basename="clients")
 contract_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
 contract_router.register(r"contract", ContractViewSet, basename="contract")
 
-event_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
+event_router = routers.NestedSimpleRouter(
+    contract_router, "contract", lookup="contract"
+)
 event_router.register(r"event", EventViewSet, basename="event")
 
 urlpatterns = [
@@ -44,4 +46,5 @@ urlpatterns = [
     path("login", ObtainTokainPairView.as_view(), name="obtain_token"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
     path("", include(contract_router.urls)),
+    path("", include(event_router.urls)),
 ]

@@ -33,7 +33,7 @@ class Client(models.Model):
     )
 
     def __str__(self):
-        return f"Client : {self.last_name} - working for {self.company_name}"
+        return f"Client {self.pk} : {self.last_name} - Company : {self.company_name}"
 
 
 class Contract(models.Model):
@@ -52,7 +52,7 @@ class Contract(models.Model):
     payment_due = models.DateField()
 
     def __str__(self):
-        return f"Contract attached to {self.client} - Status : {self.status} - Amount : {self.amount} - Payment due {self.payment_due}"
+        return f"Contract {self.pk} - {self.client} - Status : {self.status} - Amount : {self.amount} - Payment due {self.payment_due}"
 
 
 class Event(models.Model):
@@ -75,4 +75,4 @@ class Event(models.Model):
     note = models.TextField()
 
     def __str__(self):
-        return f"Event attached to {self.client} - Status : {self.event_status} - Attendees : {self.attendees} - Event date {self.event_date}"
+        return f"Event {self.pk} attached to {self.client} - Status : {self.event_status} - Attendees : {self.attendees} - Event date {self.event_date}"

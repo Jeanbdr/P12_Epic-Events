@@ -39,7 +39,7 @@ class ClientViewSet(ModelViewSet):
 class ContractViewSet(ModelViewSet):
     # queryset = Contract.objects.all()
     def get_queryset(self):
-        queryset = Contract.objects.filter(client=self.kwargs["client_pk"])
+        queryset = Contract.objects.filter(client=self.kwargs["clients_pk"])
         return queryset
 
     permission_classes = (IsAuthenticated,)
