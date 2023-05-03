@@ -31,20 +31,28 @@ from crm.views import (
 router = routers.SimpleRouter()
 router.register("clients", ClientViewSet, basename="clients")
 
-contract_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
-contract_router.register(r"contract", ContractViewSet, basename="contract")
+contract_router = routers.SimpleRouter()
+contract_router.register("contract", ContractViewSet, basename="contract")
 
-event_router = routers.NestedSimpleRouter(
-    contract_router, "contract", lookup="contract"
+contract_nested_router = routers.NestedSimpleRouter(router, "clients", lookup="clients")
+contract_nested_router.register(r"contract", ContractViewSet, basename="contract")
+
+event_router = routers.SimpleRouter()
+event_router.register("event", EventViewSet, basename="event")
+
+event_nested_router = routers.NestedSimpleRouter(
+    contract_nested_router, "contract", lookup="contract"
 )
-event_router.register(r"event", EventViewSet, basename="event")
+event_nested_router.register(r"event", EventViewSet, basename="event")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(router.urls)),
+    path("", include(contract_router.urls)),
+    path("", include(event_router.urls)),
     path("registration", SignupViewSet.as_view(), name="registration"),
     path("login", ObtainTokainPairView.as_view(), name="obtain_token"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
-    path("", include(contract_router.urls)),
-    path("", include(event_router.urls)),
+    path("", include(contract_nested_router.urls)),
+    path("", include(event_nested_router.urls)),
 ]

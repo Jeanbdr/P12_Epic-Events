@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from crm.permissions import CustomersAndContractPermissions, EventPermissions
 from crm.models import User, Client, Contract, Event
 from crm.serializers import (
     SignUpSerializer,
@@ -32,21 +33,17 @@ class SignupViewSet(generics.CreateAPIView):
 
 class ClientViewSet(ModelViewSet):
     queryset = Client.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, CustomersAndContractPermissions]
     serializer_class = ClientSerializer
 
 
 class ContractViewSet(ModelViewSet):
-    # queryset = Contract.objects.all()
-    def get_queryset(self):
-        queryset = Contract.objects.filter(client=self.kwargs["clients_pk"])
-        return queryset
-
-    permission_classes = (IsAuthenticated,)
+    queryset = Contract.objects.all()
+    permission_classes = [IsAuthenticated, CustomersAndContractPermissions]
     serializer_class = ContractSerializer
 
 
 class EventViewSet(ModelViewSet):
     queryset = Event.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, EventPermissions]
     serializer_class = EventSerializer
