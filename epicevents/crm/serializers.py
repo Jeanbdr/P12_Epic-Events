@@ -132,19 +132,19 @@ class EventSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["id", "client", "date_created", "date_updated", "contract"]
 
+    def validate_support_contact(self, support_contact):
+        if support_contact.role != "SUPPORT":
+            raise ValidationError("This user is not a support user")
+        return support_contact
+
     def create(self, validated_data):
-        contract = Contract.objects.get(id=self.context["view"].kwargs["contract_pk"])
-        client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
         event = Event.objects.create(
-            client=client,
-            contract=contract,
+            client_id=self.context["view"].kwargs["clients_pk"],
+            contract_id=self.context["view"].kwargs["contract_pk"],
             event_status=validated_data["event_status"],
             support_contact=validated_data["support_contact"],
             attendees=validated_data["attendees"],
             event_date=validated_data["event_date"],
             note=validated_data["note"],
         )
-        if event.support_contact.role == "SUPPORT":
-            return event
-        else:
-            raise ValidationError("This user is not a support user")
+        return event

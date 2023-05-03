@@ -7,56 +7,36 @@ class CustomersAndContractPermissions(BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST" and request.user.role == "SALES":
             return True
-
-        if request.method == "GET" and request.user.role in (
-            "SALES",
-            "MANAGEMENT",
-            "SUPPORT",
-        ):
+        if request.method == "GET":
             return True
-
-        if request.method == "DELETE" and request.user.role in (
-            "SALES",
-            "MANAGEMENT",
-            "SUPPORT",
-        ):
+        if request.method == "DELETE":
             return False
-
-        if request.method in ("PATCH", "UPDATE") and request.user.role == "MANAGEMENT":
+        if request.method in ("PATCH", "UPDATE") and request.user.role in (
+            "MANAGEMENT",
+            "SALES",
+        ):
             return True
 
     def has_object_permission(self, request, view, obj):
-        if (
-            request.method in ("PATCH", "UPDATE")
-            and obj.sales_contact == self.request.user
-        ):
-            return True
+        if request.method in ("PATCH", "UPDATE"):
+            return (
+                request.user.role == "MANAGEMENT" or obj.sales_contact == request.user
+            )
 
 
 class EventPermissions(BasePermission):
     def has_permission(self, request, view):
-        if request.method == "GET" and request.user.role in (
-            "SALES",
-            "MANAGEMENT",
-            "SUPPORT",
-        ):
+        if request.method in ("GET", "PATCH", "UPDATE"):
             return True
-        if request.method == "DELETE" and request.user.role in (
-            "SALES",
-            "MANAGEMENT",
-            "SUPPORT",
-        ):
+        if request.method == "DELETE":
             return False
         if request.method == "POST" and request.user.role == "SALES":
             return True
 
-        if request.method in ("PATCH", "UPDATE") and request.user.role == "MANAGEMENT":
-            return True
-
     def has_object_permission(self, request, view, obj):
-        if (
-            request.method in ("PATCH", "UPDATE")
-            and obj.sales_contact
-            or obj.support_contact == self.request.user
-        ):
-            return True
+        if request.method in ("PATCH", "UPDATE"):
+            return (
+                request.user.role == "MANAGEMENT"
+                or obj.contract.sales_contact == request.user
+                or obj.support_contact == request.user
+            )
