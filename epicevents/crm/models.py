@@ -25,7 +25,7 @@ class Client(models.Model):
     phone = models.CharField(unique=True)
     mobile = models.CharField(unique=True)
     company_name = models.CharField(max_length=250)
-    client_status = models.BooleanField(default=False, verbose_name="Under contract")
+    under_contract = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     sales_contact = models.ForeignKey(

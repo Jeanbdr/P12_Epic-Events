@@ -1,4 +1,7 @@
+from typing import Optional
 from django.contrib import admin
+from django.contrib.admin import site
+from django.http.request import HttpRequest
 from crm.models import User, Client, Event, Contract
 from crm.serializers import SignUpSerializer
 from django.contrib.auth.models import Group
@@ -16,6 +19,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets
     fieldsets[0][1]["fields"] = fieldsets[0][1]["fields"] + ("role",)
     search_fields = ("username", "email")
+    actions = ["delete_selected"]
 
 
 # Register other elements
@@ -30,3 +34,5 @@ admin.site.unregister(Group)
 # Modify title and header of site
 admin.site.site_header = "Epic Events Administration"
 admin.site.site_title = "Epic Events"
+
+site.disable_action("delete_selected")
