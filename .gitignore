@@ -6,3 +6,4 @@ bin
 include
 lib
 .Python
+config.py

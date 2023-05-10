@@ -28,6 +28,12 @@ from crm.views import (
     EventViewSet,
 )
 
+
+def trigger_error(request):
+    # Function used to ensure the proper functioning of Sentry
+    division_by_zero = 1 / 0
+
+
 router = routers.SimpleRouter()
 router.register("clients", ClientViewSet, basename="clients")
 
@@ -55,4 +61,5 @@ urlpatterns = [
     path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
     path("", include(contract_nested_router.urls)),
     path("", include(event_nested_router.urls)),
+    path("sentry-debug/", trigger_error),
 ]
