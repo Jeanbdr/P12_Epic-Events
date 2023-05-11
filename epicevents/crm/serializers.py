@@ -137,15 +137,10 @@ class EventSerializer(serializers.ModelSerializer):
             raise ValidationError("This user is not a support user")
         return support_contact
 
-    def verify_contract(self, contract):
-        if contract.status is False:
+    def verify_contract(self, contract_id):
+        if contract_id.status == False:
             raise ValidationError("You can't create an event if contract is not signed")
-        return contract
-
-    def event_status_update(self, event_status):
-        if event_status == "DONE":
-            raise ValidationError("You can't modify an event done")
-        return event_status
+        return contract_id
 
     def create(self, validated_data):
         event = Event.objects.create(

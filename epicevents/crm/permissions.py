@@ -34,7 +34,7 @@ class EventPermissions(BasePermission):
             return True
 
     def has_object_permission(self, request, view, obj):
-        if request.method in ("PATCH", "UPDATE"):
+        if request.method in ("PATCH", "UPDATE") and obj.event_status == "COMING":
             return (
                 request.user.role == "MANAGEMENT"
                 or obj.contract.sales_contact == request.user

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics
+from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -32,18 +33,24 @@ class SignupViewSet(generics.CreateAPIView):
 
 
 class ClientViewSet(ModelViewSet):
+    filter_backends = [SearchFilter]
+    search_fields = ["last_name", "email"]
     queryset = Client.objects.all()
     permission_classes = [IsAuthenticated, CustomersAndContractPermissions]
     serializer_class = ClientSerializer
 
 
 class ContractViewSet(ModelViewSet):
+    filter_backends = [SearchFilter]
+    search_fields = ["client__last_name", "client__email"]
     queryset = Contract.objects.all()
     permission_classes = [IsAuthenticated, CustomersAndContractPermissions]
     serializer_class = ContractSerializer
 
 
 class EventViewSet(ModelViewSet):
+    filter_backends = [SearchFilter]
+    search_fields = ["client__last_name", "client__email"]
     queryset = Event.objects.all()
     permission_classes = [IsAuthenticated, EventPermissions]
     serializer_class = EventSerializer
