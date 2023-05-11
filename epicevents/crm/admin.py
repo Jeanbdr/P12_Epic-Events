@@ -22,10 +22,25 @@ class UserAdmin(BaseUserAdmin):
     actions = ["delete_selected"]
 
 
+class EventAdmin(admin.ModelAdmin):
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class ClientAdmin(admin.ModelAdmin):
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class ContractAdmin(admin.ModelAdmin):
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 # Register other elements
-admin.site.register(Client)
-admin.site.register(Event)
-admin.site.register(Contract)
+admin.site.register(Client, ClientAdmin)
+admin.site.register(Event, EventAdmin)
+admin.site.register(Contract, ContractAdmin)
 
 # Model unregistered on admin panel
 admin.site.unregister(Group)

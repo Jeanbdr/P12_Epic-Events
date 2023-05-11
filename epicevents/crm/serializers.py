@@ -84,7 +84,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         client = Client.objects.create(
-            client_status=validated_data["client_status"],
+            under_contract=validated_data["under_contract"],
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             email=validated_data["email"],
@@ -130,17 +130,22 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = "__all__"
-        read_only_fields = ["id", "client", "date_created", "date_updated", "contract"]
+        read_only_fields = [
+            "id",
+            "client",
+            "date_created",
+            "date_updated",
+        ]
 
     def validate_support_contact(self, support_contact):
         if support_contact.role != "SUPPORT":
             raise ValidationError("This user is not a support user")
         return support_contact
 
-    def verify_contract(self, contract_id):
-        if contract_id.status == False:
+    def validate_contract(self, contract):
+        if not contract.status:
             raise ValidationError("You can't create an event if contract is not signed")
-        return contract_id
+        return contract
 
     def create(self, validated_data):
         event = Event.objects.create(
