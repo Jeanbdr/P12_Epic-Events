@@ -3,6 +3,22 @@ from rest_framework.exceptions import PermissionDenied
 
 
 # Here we will set our permissions for the api
+class EmployeeListPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if request.method == "GET":
+            return True
+        else:
+            return False
+
+
+class SignupPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if request.method == "POST" and request.user.role == "MANAGEMENT":
+            return True
+        else:
+            return False
+
+
 class CustomersAndContractPermissions(BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST" and request.user.role == "SALES":

@@ -59,6 +59,7 @@ class SignUpSerializer(serializers.ModelSerializer):
             user.is_superuser = True
             user.save()
         else:
+            user.is_staff = True
             user.save()
         return user
 
@@ -102,7 +103,6 @@ class ContractSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
-            "client",
             "sales_contact",
             "date_created",
             "date_updated",
@@ -113,6 +113,11 @@ class ContractSerializer(serializers.ModelSerializer):
         request = self.context.get("request", None)
         if request:
             return request.user
+
+    def validate_client(self, client):
+        if not client.under_contract:
+            raise ValidationError("Client must be signed before create contract")
+        return client
 
     def create(self, validated_data):
         client = Client.objects.get(id=self.context["view"].kwargs["clients_pk"])
@@ -158,3 +163,9 @@ class EventSerializer(serializers.ModelSerializer):
             note=validated_data["note"],
         )
         return event
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "role", "username", "first_name", "last_name", "email"]

@@ -26,6 +26,7 @@ from crm.views import (
     ObtainTokainPairView,
     ContractViewSet,
     EventViewSet,
+    EmployeeViewSet,
 )
 
 
@@ -51,15 +52,22 @@ event_nested_router = routers.NestedSimpleRouter(
 )
 event_nested_router.register(r"event", EventViewSet, basename="event")
 
+employee_router = routers.SimpleRouter()
+employee_router.register("employees", EmployeeViewSet, basename="employees")
+
+signup_router = routers.SimpleRouter()
+signup_router.register("create_user", SignupViewSet, basename="create_user")
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(router.urls)),
     path("", include(contract_router.urls)),
     path("", include(event_router.urls)),
-    path("registration", SignupViewSet.as_view(), name="registration"),
+    path("", include(signup_router.urls)),
     path("login", ObtainTokainPairView.as_view(), name="obtain_token"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh_token"),
     path("", include(contract_nested_router.urls)),
     path("", include(event_nested_router.urls)),
     path("sentry-debug/", trigger_error),
+    path("", include(employee_router.urls)),
 ]
